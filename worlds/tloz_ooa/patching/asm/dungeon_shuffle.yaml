@@ -1,18 +1,17 @@
 
+
+01//dungeonShuffleOpenFlagTable: |
+    dwbe 0501, drownLinkOnD7Exit # D7 Exit
+    dwbe 0004, setD5EntranceFlag # D5 entrance
+    db ff
+
 # Attempting to enter Jabu without mermaid suit will cancel the warp and instead
 # cause Link to drown. (Could happen with dungeon entrance randomization.)
 # Credit to Stewmat
-01//drownLinkOnD7Entrance: |
+01//drownLinkOnD7Exit: |
   ld a,TREASURE_MERMAID_SUIT
   call checkTreasureObtained
   jr c,@passedUnderwaterCheck
-  ld a,(wWarpDestGroup)
-  and $7f
-  cp $05 ; Only checking the group number here
-  jr nz,@passedUnderwaterCheck
-  ld a,(wWarpDestRoom)
-  cp $01 ; Actually checking the "warp dest index" not the room index
-  jr nz,@passedUnderwaterCheck  
   ; Is leading to jabu. Replace the warp tile with a deep water tile.
   ld h,$cf
   ld a,($FF8D)
@@ -22,7 +21,43 @@
   @passedUnderwaterCheck:
   jp $6163 ; initiateWarp
 
-01/61cf/ : jp drownLinkOnD7Entrance
+01//setD5EntranceFlag: |
+  ld hl, $c70a
+  set 7,(hl)
+  jp $6163 ; initiateWarp
+
+01//checkDungeonWarp_body: |
+  ld a,(wWarpDestGroup)
+  and $7f
+  ld b,a
+  ld a,(wWarpDestRoom)
+  ld c,a
+  ld hl, dungeonShuffleOpenFlagTable
+  @loopStart:
+  ldi a,(hl)
+  cp $ff 
+  jp z,$6163 ; Not a warp that we are interested in, initiateWarp
+  cp b ; Only checking the group number here
+  ldi a,(hl)
+  jr nz,@loopEnd
+  cp c ; Actually checking the "warp dest index" not the room index
+  jr nz,@loopEnd
+  ldi a,(hl)
+  ld l,(hl)
+  ld h,a
+  jp (hl)
+  @loopEnd:
+  inc hl
+  inc hl
+  jr @loopStart
+
+01//checkDungeonWarp_head : |
+  ld ($cc49),a
+  jp checkDungeonWarp_body
+
+01/6160/ : jp checkDungeonWarp_head
+01/61cf/ : jp checkDungeonWarp_body
+
 
 # prevent surfacing from underwater without the mermaid suit. this is only
 # relevant for the sea of no return if entrances are unrandomized.
