@@ -289,6 +289,12 @@
     dw script_soldierGiveItem
     db $5d,$ee # jump
 0c//script_dekuForestSoldier: |
+    db jumpifmemoryeq
+    dw wActiveRoom
+    db $72
+    dw @goodSoldier
+    db $5d,$ee # jump
+    @goodSoldier:
     db jumpifroomflagset,$20
     dw script_soldierDone
     db jumpifitemobtained,TREASURE_MYSTERY_SEEDS
