@@ -50,6 +50,8 @@ def get_asm_files(patch_data):
         asm_files.append("asm/conditional/quick_flute.yaml")
     if not(patch_data["options"]["enable_dance_and_joke"]):
         asm_files.append("asm/conditional/skip_dance_and_joke.yaml")
+    if patch_data["options"]["qol_mermaid_suit"]:
+        asm_files.append("asm/conditional/qol_mermaid_suit.yaml")
     return asm_files
 
 

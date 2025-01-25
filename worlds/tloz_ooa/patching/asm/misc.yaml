@@ -140,10 +140,6 @@
   ret
 10/5aae/: call thatallfolks
 
-#Mermaid QOL
-05/5910/: db 29
-05/5924/: db 00,00,00
-
 # d2: if past entrance is closed, force it open upon exit
 # d7: reset water level when exiting (see logic comments).
 # NOTE : Potentially movable to another bank ?
