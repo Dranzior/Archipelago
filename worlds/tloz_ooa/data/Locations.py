@@ -329,7 +329,8 @@ LOCATIONS_DATA = {
     "Deku Forest Soldier": {
         "region_id": "deku forest soldier",
         "vanilla_item": "Bombs (10)",
-        "flag_byte": 0xc872,
+        "flag_byte": 0xc6d9,
+        "bit_mask": 0x04,
         "room": 0x0172,
         "collect": COLLECT_TOUCH,
         "symbolic_name": "dekuForestSoldier",
