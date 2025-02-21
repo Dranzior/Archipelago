@@ -230,25 +230,6 @@ class OracleOfAgesQuickFlute(DefaultOnToggle):
     """
     display_name = "Quick Flute & Harp"
 
-
-class OracleOfAgesHeartBeepInterval(Choice):
-    """
-    <NOT IMPLEMENTED RIGHT NOW>
-    - Default: play the beeping sound at the usual frequency when low on health
-    - Half: play the beeping sound two times less when low on health
-    - Quarter: play the beeping sound four times less when low on health
-    - Disabled: never play the beeping sound when low on health
-    """
-    display_name = "Heart Beep Frequency"
-
-    option_default = 0
-    option_half = 1
-    option_quarter = 2
-    option_disabled = 3
-
-    default = 0
-
-
 class OracleOfAgesCharacterSprite(Choice):
     """
     <NOT IMPLEMENTED RIGHT NOW>
@@ -303,7 +284,6 @@ class OracleOfAgesOptions(PerGameCommonOptions):
     warp_to_start: OracleOfAgesWarpToStart
     combat_difficulty: OracleOfAgesCombatDifficulty
     quick_flute: OracleOfAgesQuickFlute
-    heart_beep_interval: OracleOfAgesHeartBeepInterval
     character_sprite: OracleOfAgesCharacterSprite
     character_palette: OracleOfAgesCharacterPalette
     death_link: DeathLink

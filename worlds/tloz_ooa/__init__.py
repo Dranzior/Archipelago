@@ -25,8 +25,15 @@ class OOASettings(settings.Group):
         description = "Oracle of Ages (USA) ROM File"
         copy_to = "Legend of Zelda, The - Oracle of Ages (USA).gbc"
         md5s = [ROM_HASH]
+    
+    class OoAHeartBeepInterval(str):
+        """
+        A factor applied to the infamous heart beep sound interval.
+        Valid values are: "vanilla", "half", "quarter", "disabled"
+        """
 
     rom_file: OOARomFile = OOARomFile(OOARomFile.copy_to)
+    heart_beep_interval: Union[OoAHeartBeepInterval, str] = "vanilla"
 
 class OracleOfAgesWeb(WebWorld):
     theme = "grass"

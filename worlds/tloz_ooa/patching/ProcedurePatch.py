@@ -70,7 +70,7 @@ class OoAPatchExtensions(APPatchExtension):
         set_dungeon_warps(rom_data, patch_data)
         #apply_miscellaneous_options(rom_data, patch_data)
 
-        #set_heart_beep_interval_from_settings(rom_data)
+        set_heart_beep_interval_from_settings(rom_data)
         #set_character_sprite_from_settings(rom_data)
         inject_slot_name(rom_data, caller.player_name)
 

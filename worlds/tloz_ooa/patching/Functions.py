@@ -366,3 +366,14 @@ def set_file_select_text(assembler: Z80Assembler, slot_name: str):
     text_tiles.extend([0x02] * 12)  # Offscreen tiles
 
     assembler.add_floating_chunk("dma_FileSelectStringTiles", text_tiles)
+
+    
+def set_heart_beep_interval_from_settings(rom: RomData):
+    print(get_settings()["tloz_ooa_options"]["heart_beep_interval"])
+    heart_beep_interval = get_settings()["tloz_ooa_options"]["heart_beep_interval"]
+    if heart_beep_interval == "half":
+        rom.write_byte(0x914B, 0x3f * 2)
+    elif heart_beep_interval == "quarter":
+        rom.write_byte(0x914B, 0x3f * 4)
+    elif heart_beep_interval == "disabled":
+        rom.write_bytes(0x914B, [0x00, 0xc9])  # Put a return to avoid beeping entirely
