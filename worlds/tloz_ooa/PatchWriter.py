@@ -26,8 +26,7 @@ def ooa_create_appp_patch(world: "OracleOfAgesWorld") -> OoAProcedurePatch:
             "required_slates", "animal_companion", "default_seed", "shuffle_dungeons", "master_keys",
             "keysanity_small_keys", "keysanity_boss_keys", "keysanity_maps_compasses", "keysanity_slates",
             "ring_quality", "shop_prices_factor", "advance_shop", "warp_to_start", "enable_dance_and_joke",
-            "qol_mermaid_suit","combat_difficulty", "quick_flute",
-            "character_sprite", "character_palette", "death_link"
+            "qol_mermaid_suit","combat_difficulty", "quick_flute", "death_link"
         ]),
         "dungeon_entrances": {a.replace(" entrance", ""): b.replace("enter ", "")
                               for a, b in world.dungeon_entrances.items()},
