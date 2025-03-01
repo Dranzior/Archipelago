@@ -424,6 +424,7 @@ ASM_FILES = [
     "asm/dungeon_shuffle.yaml",
     "asm/file_select_custom_string.yaml",
     "asm/impa_refill.yaml",
+    "asm/combat_difficulty.yaml",
 ]
 
 RUPEE_VALUES = {

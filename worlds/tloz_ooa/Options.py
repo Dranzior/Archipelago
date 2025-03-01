@@ -209,19 +209,18 @@ class OracleOfAgesWarpToStart(DefaultOnToggle):
 
 class OracleOfAgesCombatDifficulty(Choice):
     """
-    <NOT IMPLEMENTED RIGHT NOW>
     Modifies the damage taken during combat to make this aspect of the game easier or harder depending on the
     type of experience you want to have
     """
     display_name = "Combat Difficulty"
 
-    option_peaceful = 0
-    option_easier = 1
-    option_vanilla = 2
-    option_harder = 3
-    option_insane = 4
+    option_peaceful = 4
+    option_easier = 2
+    option_vanilla = 0
+    option_harder = -2
+    option_insane = -4
 
-    default = 2
+    default = 0
 
 
 class OracleOfAgesQuickFlute(DefaultOnToggle):
