@@ -380,6 +380,8 @@ DEFINES = {
     # Existing Global Flag
     "GLOBALFLAG_WON_FAIRY_HIDING_GAME":"$0e",
     "GLOBALFLAG_TUNI_NUT_PLACED":"$29",
+	"GLOBALFLAG_BOUGHT_FEATHER_FROM_TOKAY" : "$36",
+	"GLOBALFLAG_BOUGHT_BRACELET_FROM_TOKAY"	: "$37",
 
     # Custom Global Flag
     "GLOBALFLAG_GOT_SEACHART":"$03",
@@ -425,6 +427,7 @@ ASM_FILES = [
     "asm/file_select_custom_string.yaml",
     "asm/impa_refill.yaml",
     "asm/combat_difficulty.yaml",
+    "asm/tokay_market.yaml"
 ]
 
 RUPEE_VALUES = {
