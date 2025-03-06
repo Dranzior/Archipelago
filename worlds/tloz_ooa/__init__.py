@@ -42,11 +42,35 @@ class OOASettings(settings.Group):
         A factor applied to the infamous heart beep sound interval.
         Valid values are: "vanilla", "half", "quarter", "disabled"
         """
+    
+    class OoAQolMermaidSuit(str):
+        """
+        Defines if you don't want to spam the buttons to swim with the mermaid suit.
+        """
+        
+    class OoAQuickFlute(str):
+        """
+        When enabled, playing the flute and the harp will immobilize you during a very small amount of time compared to vanilla game.
+        """
+
+    class OoASkipTokkeyDance(str):
+        """
+        Defines if you want to skip the small dance that tokkay does
+        """
+
+    class OoASkipSadBoiJoke(str):
+        """
+        Defines if you want to skip the joke you tell to the sad boi
+        """
 
     rom_file: OOARomFile = OOARomFile(OOARomFile.copy_to)
     heart_beep_interval: Union[OoAHeartBeepInterval, str] = "vanilla"
     character_sprite: Union[OoACharacterSprite, str] = "link"
     character_palette: Union[OoACharacterPalette, str] = "green"
+    qol_mermaid_suit: Union[OoAQolMermaidSuit, bool] = True
+    qol_quick_flute: Union[OoAQuickFlute, bool] = True
+    skip_tokkey_dance: Union[OoASkipTokkeyDance, bool] = False
+    skip_boi_joke: Union[OoASkipSadBoiJoke, bool] = False
 
 class OracleOfAgesWeb(WebWorld):
     theme = "grass"

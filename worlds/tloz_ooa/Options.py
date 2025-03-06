@@ -159,20 +159,6 @@ class OracleOfAgesRingQuality(Choice):
 
     default = 1
 
-class OracleOfAgesEnableTokkeyDanceAndKidJoke(Toggle):
-    """
-    Defines if you don't want to skip the small dance that tokkay does and the joke you tell the kid. (Because some people like it)
-    """
-    display_name = "Enable Tokkey Dance and Kid Joke"
-
-
-class OracleOfAgesQolMermaidSuit(Toggle):
-    """
-    Defines if you don't want to spam the buttons to swim with the mermaid suit.
-    """
-    display_name = "Enable Mermaid Suit's QOL"
-    default = True
-
 class OracleOfAgesPricesFactor(Range):
     """
     A factor (expressed as percentage) that will be applied to all prices inside all shops in the game.
@@ -222,19 +208,10 @@ class OracleOfAgesCombatDifficulty(Choice):
 
     default = 0
 
-
-class OracleOfAgesQuickFlute(DefaultOnToggle):
-    """
-    When enabled, playing the flute and the harp will immobilize you during a very small amount of time compared to vanilla game.
-    """
-    display_name = "Quick Flute & Harp"
-
 @dataclass
 class OracleOfAgesOptions(PerGameCommonOptions):
     start_inventory_from_pool: StartInventoryPool
     goal: OracleOfAgesGoal
-    enable_dance_and_joke: OracleOfAgesEnableTokkeyDanceAndKidJoke
-    qol_mermaid_suit: OracleOfAgesQolMermaidSuit
     logic_difficulty: OracleOfAgesLogicDifficulty
     required_essences: OracleOfAgesRequiredEssences
     required_slates: OracleOfAgesRequiredSlates
@@ -251,5 +228,4 @@ class OracleOfAgesOptions(PerGameCommonOptions):
     advance_shop: OracleOfAgesAdvanceShop
     warp_to_start: OracleOfAgesWarpToStart
     combat_difficulty: OracleOfAgesCombatDifficulty
-    quick_flute: OracleOfAgesQuickFlute
     death_link: DeathLink

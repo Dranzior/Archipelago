@@ -6,6 +6,3 @@
 15/76d5/: |
   db jumpalways
   dw c36e
-
-# skip joke
-15/58f2/: db 28,59

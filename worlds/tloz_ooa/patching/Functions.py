@@ -49,16 +49,17 @@ def alter_treasures(rom: RomData):
 
 def get_asm_files(patch_data):
     asm_files = ASM_FILES.copy()
-    if patch_data["options"]["quick_flute"]:
+    if get_settings()["tloz_ooa_options"]["qol_quick_flute"]:
         asm_files.append("asm/conditional/quick_flute.yaml")
-    if not(patch_data["options"]["enable_dance_and_joke"]):
-        asm_files.append("asm/conditional/skip_dance_and_joke.yaml")
-    if patch_data["options"]["qol_mermaid_suit"]:
+    if get_settings()["tloz_ooa_options"]["skip_tokkey_dance"]:
+        asm_files.append("asm/conditional/skip_dance.yaml")
+    if get_settings()["tloz_ooa_options"]["skip_boi_joke"]:
+        asm_files.append("asm/conditional/skip_joke.yaml")
+    if get_settings()["tloz_ooa_options"]["qol_mermaid_suit"]:
         asm_files.append("asm/conditional/qol_mermaid_suit.yaml")
     if patch_data["options"]["warp_to_start"]:
         asm_files.append("asm/conditional/warp_to_start.yaml")
     return asm_files
-
 
 def define_location_constants(assembler: Z80Assembler, patch_data):
     for location_name, location_data in LOCATIONS_DATA.items():
