@@ -10,7 +10,8 @@ from .z80asm.Assembler import Z80Assembler
 from ..data.Constants import *
 from .Constants import *
 from pathlib import Path
-from .. import LOCATIONS_DATA
+
+from .. import LOCATIONS_DATA, OracleOfAgesMasterKeys
 
 
 def get_treasure_addr(rom: RomData, item_name: str):
@@ -103,6 +104,9 @@ def define_option_constants(assembler: Z80Assembler, patch_data):
     keysanity = patch_data["options"]["keysanity_small_keys"] or patch_data["options"]["keysanity_boss_keys"]
     assembler.define_byte("option.customCompassChimes", 1 if keysanity else 0)
 
+    master_keys_as_boss_keys = patch_data["options"]["master_keys"] == OracleOfAgesMasterKeys.option_all_dungeon_keys
+    assembler.define_byte("option.smallKeySprite", 0x43 if master_keys_as_boss_keys else 0x42)
+
 def process_item_name_for_shop_text(item_name: str) -> List[int]:
     words = item_name.split(" ")
     current_line = 0
@@ -184,14 +188,14 @@ def define_compass_rooms_table(assembler: Z80Assembler, patch_data):
     for location_name, item_name in patch_data["locations"].items():
         _, item_subid = get_item_id_and_subid(item_name)
         dungeon = 0xff
-        if item_name.startswith("Small Key") or item_name.startswith("Master Key") or item_name.startswith(
-                "Dungeon Map"):
+        if item_name.startswith("Small Key") or item_name.startswith("Master Key"):
             dungeon = item_subid
         elif item_name.startswith("Boss Key"):
             dungeon = item_subid + 1
 
         if dungeon != 0xff:
             location_data = LOCATIONS_DATA[location_name]
+            print(location_name)
             rooms = location_data["room"]
             if not isinstance(rooms, list):
                 rooms = [rooms]
@@ -437,3 +441,13 @@ def set_character_sprite_from_settings(rom: RomData):
     rom.write_byte(0x8d93, palette_byte)
     rom.write_byte(0x8d98, 0x20 | palette_byte)
     rom.write_byte(0x8d9c, 0x20 | palette_byte)
+
+def apply_misc_option(rom: RomData, patch_data):
+    if patch_data["options"]["master_keys"] != OracleOfAgesMasterKeys.option_disabled:
+        # Remove small key consumption on keydoor opened
+        rom.write_byte(0x18366, 0x00)
+        # Change obtention text
+        rom.write_bytes(0x78247, [0x4d, 0x61, 0x73, 0x74, 0x65, 0x72, 0x20, 0x4b, 0x65, 0x79, 0x09, 0x01, 0x21, 0x00]) # I really wish that the dictionnay of ages would be more useful...
+    if patch_data["options"]["master_keys"] == OracleOfAgesMasterKeys.option_all_dungeon_keys:
+        # Remove boss key consumption on boss keydoor opened (boss door behave like normal locked door)
+        rom.write_word(0x1835e, 0x0000)

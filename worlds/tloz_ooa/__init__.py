@@ -231,7 +231,6 @@ class OracleOfAgesWorld(World):
         elif self.options.goal == OracleOfAgesGoal.option_beat_ganon:
             self.create_event("ganon beaten", "_beaten_game")
 
-        # TODO EVENTS
         self.create_event("ridge move vine seed", "_access_cart")
 
         self.create_event("d3 S crystal", "_d3_S_crystal")
@@ -279,9 +278,16 @@ class OracleOfAgesWorld(World):
 
     def build_item_pool_dict(self):
         item_pool_dict = {}
+        filler_item_count = 0
         for loc_name, loc_data in LOCATIONS_DATA.items():
+
+            if "vanilla_item" not in loc_data:
+                #print("Can't create item from location '",loc_name ,"' because it doesn't have one")
+                continue
+
+            item_name = loc_data['vanilla_item']
             if "randomized" in loc_data and loc_data["randomized"] is False:
-                item = self.create_item(loc_data['vanilla_item'])
+                item = self.create_item(item_name)
                 location = self.multiworld.get_location(loc_name, self.player)
                 location.place_locked_item(item)
                 #print("placing locked item '",loc_data['vanilla_item'] ,"' in '",loc_name ,"'")
@@ -289,8 +295,15 @@ class OracleOfAgesWorld(World):
             if not self.location_is_active(loc_name, loc_data):
                 #print("Can't create item '",loc_data['vanilla_item'] ,"' because '",loc_name ,"' is not active")
                 continue
-            if "vanilla_item" not in loc_data:
-                #print("Can't create item from location '",loc_name ,"' because it doesn't have one")
+
+
+            if self.options.master_keys != OracleOfAgesMasterKeys.option_disabled and "Small Key" in item_name:
+                # Small Keys don't exist if Master Keys are set to replace them
+                filler_item_count += 1
+                continue
+            if self.options.master_keys == OracleOfAgesMasterKeys.option_all_dungeon_keys and "Boss Key" in item_name:
+                # Boss keys don't exist if Master Keys are set to replace them
+                filler_item_count += 1
                 continue
 
             item_name = loc_data['vanilla_item']
@@ -299,16 +312,25 @@ class OracleOfAgesWorld(World):
 
             item_pool_dict[item_name] = item_pool_dict.get(item_name, 0) + 1
 
+        # If Master Keys are enabled, put one for every dungeon
+        if self.options.master_keys != OracleOfAgesMasterKeys.option_disabled:
+            for small_key_name in ITEM_GROUPS["Master Keys"]:
+                item_pool_dict[small_key_name] = 1
+                filler_item_count -= 1
+
+        # Add as many filler items as required
+        for _ in range(filler_item_count):
+            random_filler_item = self.get_filler_item_name()
+            item_pool_dict[random_filler_item] = item_pool_dict.get(random_filler_item, 0) + 1
         
         # Perform adjustments on the item pool
         item_pool_adjustements = [
             ["Flute", self.options.animal_companion.current_key.title() + "'s Flute"],  # Put a specific flute
             ["Gasha Seed", "Seed Satchel"],             # Add a 3rd satchel that is usually obtained in linked games (99 seeds)
             ["Gasha Seed", "Bombs (10)"],               # Add one more bomb compared to vanilla to reach 99 max bombs
-            ["Gasha Seed", "Potion"],                   # Too many Gasha Seeds in vanilla pool, add potion which is used for the zora king
+            ["Gasha Seed", "Potion"],                   # Replace some Gasha Seed by 2 potions.
             ["Gasha Seed", "Potion"],                   # ^
-            ["Gasha Seed", "Potion"],                   # ^
-            ["Gasha Seed", "Potion"],                   # ^
+            ["Gasha Seed", "Rupees (200)"],              # and one by rupees
             ["Gasha Seed", "Progressive Sword"],        # Need an additionnal sword to go to L3
         ]
 
@@ -317,23 +339,6 @@ class OracleOfAgesWorld(World):
             replacement_name = pair[1]
             item_pool_dict[original_name] -= 1
             item_pool_dict[replacement_name] = item_pool_dict.get(replacement_name, 0) + 1
-
-        # If Master Keys replace Small Keys, remove all Small Keys but one for every dungeon
-        removed_keys = 0
-        if self.options.master_keys != OracleOfAgesMasterKeys.option_disabled:
-            for small_key_name in ITEM_GROUPS["Small Keys"]:
-                removed_keys += item_pool_dict[small_key_name] - 1
-                del item_pool_dict[small_key_name]
-            for small_key_name in ITEM_GROUPS["Master Keys"]:
-                item_pool_dict[small_key_name] = 1
-        # If Master Keys replace Boss Keys, remove Boss Keys from item pool
-        if self.options.master_keys == OracleOfAgesMasterKeys.option_all_dungeon_keys:
-            for boss_key_name in ITEM_GROUPS["Boss Keys"]:
-                removed_keys += 1
-                del item_pool_dict[boss_key_name]
-        for i in range(removed_keys):
-            random_filler_item = self.get_filler_item_name()
-            item_pool_dict[random_filler_item] = item_pool_dict.get(random_filler_item, 0) + 1
 
         return item_pool_dict
 
@@ -475,11 +480,15 @@ class OracleOfAgesWorld(World):
 
     def get_filler_item_name(self) -> str:
         FILLER_ITEM_NAMES = [
-            "Rupees (1)", "Rupees (5)", "Rupees (10)", "Rupees (20)", "Rupees (30)", "Rupees (50)",
-            "Gasha Seed", "Potion"
+            "Rupees (1)", "Rupees (5)", "Rupees (5)", "Rupees (10)", "Rupees (10)",
+            "Rupees (20)", "Rupees (30)",
+            "Gasha Seed", "Gasha Seed",
+            "Potion"
         ]
-        return self.random.choice(FILLER_ITEM_NAMES)
 
+        item_name = self.random.choice(FILLER_ITEM_NAMES)
+        return item_name
+    
     def generate_output(self, output_directory: str):
         patch = ooa_create_appp_patch(self)
         rom_path = os.path.join(output_directory, f"{self.multiworld.get_out_file_name_base(self.player)}"

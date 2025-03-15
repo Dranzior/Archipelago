@@ -61,8 +61,6 @@ class OoAPatchExtensions(APPatchExtension):
         for block in assembler.blocks:
             rom_data.write_bytes(block.addr.full_address(), block.byte_array)
 
-        # Perform direct edits on the ROM
-        # TODO
         alter_treasures(rom_data)
         write_chest_contents(rom_data, patch_data)
         write_seed_tree_content(rom_data, patch_data)
@@ -71,6 +69,7 @@ class OoAPatchExtensions(APPatchExtension):
 
         set_heart_beep_interval_from_settings(rom_data)
         set_character_sprite_from_settings(rom_data)
+        apply_misc_option(rom_data, patch_data)
         inject_slot_name(rom_data, caller.player_name)
 
         rom_data.update_checksum(0x14e)

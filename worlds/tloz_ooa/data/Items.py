@@ -244,7 +244,12 @@ ITEMS_DATA = {
         'id': 0x30,
         'subid': 0x05
     },
-    "Master Key (Mermaid's Cave)": {
+    "Master Key (Mermaid's Cave Past)": {
+        'classification': ItemClassification.progression,
+        'id': 0x30,
+        'subid': 0x0C
+    },
+    "Master Key (Mermaid's Cave Present)": {
         'classification': ItemClassification.progression,
         'id': 0x30,
         'subid': 0x06

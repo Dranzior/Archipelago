@@ -34,7 +34,7 @@ LOCATIONS_DATA = {
         "region_id": "lynna shop",
         "vanilla_item": "Progressive Shield",
         "flag_byte": 0xc643,
-        #"room": 0x025e,
+        "room": 0x025e,
         "map_tile": 0x68,
         "bit_mask": 0x20,
         "scouting_byte": 0xc75e,
@@ -46,7 +46,7 @@ LOCATIONS_DATA = {
         "region_id": "lynna shop",
         "vanilla_item": "Bombs (10)",
         "flag_byte": 0xc643,
-        #"room": 0x025e,
+        "room": 0x025e,
         "map_tile": 0x68,
         "bit_mask": 0x40,
         "scouting_byte": 0xc75e,
@@ -58,7 +58,7 @@ LOCATIONS_DATA = {
         "region_id": "lynna shop",
         "vanilla_item": "Flute",
         "flag_byte": 0xc643,
-        #"room": 0x025e,
+        "room": 0x025e,
         "map_tile": 0x68,
         "bit_mask": 0x80,
         "scouting_byte": 0xc75e,
@@ -415,7 +415,7 @@ LOCATIONS_DATA = {
         "vanilla_item": "Light Ring L-1",
         "flag_byte": [0xc7ec, 0xcab8, 0xc7f4],
         "room": [0x02ec, 0x05b8, 0x02f4], # Rick, Dim & Moosh respectively
-        "map_tile": 0x37, # TODO : May need a fix for one animal?
+        "map_tile": 0x37, 
         "collect": COLLECT_CHEST,
     },
     ##########################################

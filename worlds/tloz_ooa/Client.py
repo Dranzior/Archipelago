@@ -10,12 +10,6 @@ from .Data import build_item_id_to_name_dict, build_location_name_to_id_dict
 if TYPE_CHECKING:
     from worlds._bizhawk.context import BizHawkClientContext
 
-# TODO ADAPT TO OOA
-
-ROOM_AFTER_DRAGONOX = 0x0790
-ROOM_BLAINOS_GYM = 0x03B4
-ROOM_ZELDA_ENDING = 0x059A
-
 ROM_ADDRS = {
     "game_identifier": (0x0134, 11, "ROM"),
     "slot_name": (0xFFFC0, 64, "ROM"),
