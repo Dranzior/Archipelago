@@ -5,7 +5,6 @@ from Options import Choice, DeathLink, DefaultOnToggle, PerGameCommonOptions, Ra
 
 class OracleOfAgesGoal(Choice):
     """
-    <NOT IMPLEMENTED, ONLY VERAN IS HANDLED RIGHT NOW>
     The goal to accomplish in order to complete the seed.
     - Beat Veran: beat the usual final boss (same as vanilla)
     - Beat Ganon: teleport to the Room of Rites after beating Veran, then beat Ganon (same as linked game)
@@ -13,7 +12,7 @@ class OracleOfAgesGoal(Choice):
     display_name = "Goal"
 
     option_beat_veran = 0
-    #option_beat_ganon = 1
+    option_beat_ganon = 1
 
     default = 0
 

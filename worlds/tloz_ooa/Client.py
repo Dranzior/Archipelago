@@ -10,6 +10,8 @@ from .Data import build_item_id_to_name_dict, build_location_name_to_id_dict
 if TYPE_CHECKING:
     from worlds._bizhawk.context import BizHawkClientContext
 
+ROOM_ZELDA_ENDING = 0x05F1
+
 ROM_ADDRS = {
     "game_identifier": (0x0134, 11, "ROM"),
     "slot_name": (0xFFFC0, 64, "ROM"),
@@ -200,11 +202,11 @@ class OracleOfAgesClient(BizHawkClient):
                 veran_flag_offset = 0xC6D8 - RAM_ADDRS["location_flags"][0]
                 veran_was_beaten = (flag_bytes[veran_flag_offset] & 0x80 == 0x80)
                 game_clear = veran_was_beaten
-            #elif ctx.slot_data["goal"] == OracleOfAgesGoal.option_beat_ganon:
-            #    # Room with Zelda lying down was reached, and Ganon was beaten
-            #    ganon_flag_offset = 0xCA9A - RAM_ADDRS["location_flags"][0]
-            #    ganon_was_beaten = (flag_bytes[ganon_flag_offset] & 0x80 == 0x80)
-            #    game_clear = (current_room == ROOM_ZELDA_ENDING) and ganon_was_beaten
+            elif ctx.slot_data["goal"] == OracleOfAgesGoal.option_beat_ganon:
+                # Room with Zelda lying down was reached, and Ganon was beaten
+                ganon_flag_offset = 0xCAF1 - RAM_ADDRS["location_flags"][0]
+                ganon_was_beaten = (flag_bytes[ganon_flag_offset] & 0x80 == 0x80)
+                game_clear = (current_room == ROOM_ZELDA_ENDING) and ganon_was_beaten
         if game_clear:
             await ctx.send_msgs([{
                 "cmd": "StatusUpdate",
