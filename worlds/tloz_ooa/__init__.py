@@ -5,7 +5,7 @@ import settings
 
 from BaseClasses import Tutorial, Region, Location, LocationProgressType
 from Fill import fill_restrictive, FillError
-from Options import Accessibility
+from Options import Accessibility, OptionError
 from worlds.AutoWorld import WebWorld, World
 from typing import Any, Set, List, Dict, Optional, Tuple, ClassVar, TextIO, Union
 from .Data import *
@@ -120,7 +120,7 @@ class OracleOfAgesWorld(World):
         # TODO MOAR DATA ?
         options = ["goal", "death_link",
                    # Logic-impacting options
-                   "logic_difficulty", "warp_to_start",
+                   "logic_difficulty",
                    "shuffle_dungeons",
                    "default_seed",
                    # Locations
@@ -140,6 +140,10 @@ class OracleOfAgesWorld(World):
         return slot_data
 
     def generate_early(self):
+        conflicting_rings = self.options.required_rings.value & self.options.excluded_rings.value
+        if len(conflicting_rings) > 0:
+            raise OptionError("Required Rings and Excluded Rings contain the same element(s)", conflicting_rings)
+        
         self.restrict_non_local_items()
 
         if self.options.shuffle_dungeons == "shuffle":
@@ -266,12 +270,25 @@ class OracleOfAgesWorld(World):
         self.multiworld.completion_condition[self.player] = lambda state: state.has("_beaten_game", self.player)
 
     def create_item(self, name: str) -> Item:
+        if name.endswith("!PROG"):
+            # If item name has a "!PROG" suffix, force it to be progression. This is typically used to create the right
+            # amount of progression rupees while keeping them a filler item as default
+            name = name.removesuffix("!PROG")
+            classification = ItemClassification.progression_skip_balancing
+        elif name.endswith("!USEFUL"):
+            # Same for above but with useful. This is typically used for Required Rings,
+            # as we don't want those locked in a barren dungeon
+            name = name.removesuffix("!USEFUL")
+            classification = ITEMS_DATA[name]["classification"]
+            if classification == ItemClassification.filler:
+                classification = ItemClassification.useful
+        else:
+            classification = ITEMS_DATA[name]["classification"]
         ap_code = self.item_name_to_id[name]
-        classification = ITEMS_DATA[name]["classification"]
 
         # A few items become progression only in hard logic
-        progression_items_in_hard_logic = ["Expert's Ring", "Fist Ring", "Swimmer's Ring"]
-        if self.options.logic_difficulty == "hard" and name in progression_items_in_hard_logic:
+        progression_items_in_medium_logic = ["Expert's Ring", "Fist Ring", "Toss Ring", "Enery Ring"]
+        if self.options.logic_difficulty == "medium" and name in progression_items_in_medium_logic:
             classification = ItemClassification.progression
 
         return Item(name, classification, ap_code, self.player)
@@ -279,6 +296,7 @@ class OracleOfAgesWorld(World):
     def build_item_pool_dict(self):
         item_pool_dict = {}
         filler_item_count = 0
+        remaining_rings = len({name for name, idata in ITEMS_DATA.items() if "ring" in idata}) - len(self.options.excluded_rings.value)
         for loc_name, loc_data in LOCATIONS_DATA.items():
 
             if "vanilla_item" not in loc_data:
@@ -308,7 +326,12 @@ class OracleOfAgesWorld(World):
 
             item_name = loc_data['vanilla_item']
             if "Ring" in item_name:
-                item_name = "Random Ring"
+                if remaining_rings > 0:
+                    item_name = "Random Ring"
+                    remaining_rings -= 1
+                else:
+                    filler_item_count += 1
+                    continue
 
             item_pool_dict[item_name] = item_pool_dict.get(item_name, 0) + 1
 
@@ -316,6 +339,19 @@ class OracleOfAgesWorld(World):
         if self.options.master_keys != OracleOfAgesMasterKeys.option_disabled:
             for small_key_name in ITEM_GROUPS["Master Keys"]:
                 item_pool_dict[small_key_name] = 1
+                filler_item_count -= 1
+
+        # Add the required rings
+        ring_copy = sorted(self.options.required_rings.value.copy())
+        for _ in range(len(ring_copy)):
+            ring_name = f"{ring_copy.pop()}!USEFUL"
+            item_pool_dict[ring_name] = item_pool_dict.get(ring_name, 0) + 1
+
+            if item_pool_dict["Random Ring"] > 0:
+                # Take from set ring pool first
+                item_pool_dict["Random Ring"] -= 1
+            else:
+                # Take from filler after
                 filler_item_count -= 1
 
         # Add as many filler items as required
@@ -346,8 +382,9 @@ class OracleOfAgesWorld(World):
         item_pool_dict = self.build_item_pool_dict()
         
         # Create items following the dictionary that was previously constructed
-        self.create_rings(item_pool_dict["Random Ring"])
-        del item_pool_dict["Random Ring"]
+        if (item_pool_dict.get("Random Ring")):
+            self.create_rings(item_pool_dict["Random Ring"])
+            del item_pool_dict["Random Ring"]
 
         for item_name, quantity in item_pool_dict.items():
             for i in range(quantity):
@@ -363,16 +400,16 @@ class OracleOfAgesWorld(World):
                     self.multiworld.itempool.append(self.create_item(item_name))        
 
     def create_rings(self, amount):
-        # Get a subset of as many rings as needed, with a potential filter on quality depending on chosen options
-        ring_names = [name for name, idata in ITEMS_DATA.items() if "ring" in idata and idata["ring"] is True]
-        if self.options.ring_quality == "only_useful":
-            forbidden_classes = [ItemClassification.filler, ItemClassification.trap]
-            ring_names = [name for name in ring_names if ITEMS_DATA[name]["classification"] not in forbidden_classes]
+        # Get a subset of as many rings as needed
+        ring_names = [name for name, idata in ITEMS_DATA.items() if "ring" in idata]
+        # Remove excluded rings, and required rings because they'll be added later anyway
+        ring_names = [name for name in ring_names if name not in self.options.required_rings.value and name not in self.options.excluded_rings.value]
 
         self.random.shuffle(ring_names)
         del ring_names[amount:]
         for ring_name in ring_names:
             self.multiworld.itempool.append(self.create_item(ring_name))
+        self.random_rings_pool = ring_names
 
     def get_pre_fill_items(self):
         return self.pre_fill_items

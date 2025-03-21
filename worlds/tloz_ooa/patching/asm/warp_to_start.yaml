@@ -12,12 +12,8 @@
 #    jp checkTreeVisited
 #02/609b/: call checkCursorVisited
 
-# warp to horon village tree if holding start when opening the map screen.
+# warp to start location if holding start when opening the map screen.
 02//checkWarpToStart: |
-    ld a,option.warpToStart
-    or a
-    jr z,@done
-    
     ld a,(wKeysPressed)
     and BTN_B | BTN_A
     cp BTN_B | BTN_A
