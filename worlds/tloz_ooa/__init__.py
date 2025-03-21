@@ -287,7 +287,7 @@ class OracleOfAgesWorld(World):
         ap_code = self.item_name_to_id[name]
 
         # A few items become progression only in hard logic
-        progression_items_in_medium_logic = ["Expert's Ring", "Fist Ring", "Swimmer's Ring", "Toss Ring", "Enery Ring"]
+        progression_items_in_medium_logic = ["Expert's Ring", "Fist Ring", "Toss Ring", "Enery Ring"]
         if self.options.logic_difficulty == "medium" and name in progression_items_in_medium_logic:
             classification = ItemClassification.progression
 
@@ -296,6 +296,7 @@ class OracleOfAgesWorld(World):
     def build_item_pool_dict(self):
         item_pool_dict = {}
         filler_item_count = 0
+        remaining_rings = len({name for name, idata in ITEMS_DATA.items() if "ring" in idata}) - len(self.options.excluded_rings.value)
         for loc_name, loc_data in LOCATIONS_DATA.items():
 
             if "vanilla_item" not in loc_data:
@@ -325,7 +326,12 @@ class OracleOfAgesWorld(World):
 
             item_name = loc_data['vanilla_item']
             if "Ring" in item_name:
-                item_name = "Random Ring"
+                if remaining_rings > 0:
+                    item_name = "Random Ring"
+                    remaining_rings -= 1
+                else:
+                    filler_item_count += 1
+                    continue
 
             item_pool_dict[item_name] = item_pool_dict.get(item_name, 0) + 1
 
@@ -376,8 +382,9 @@ class OracleOfAgesWorld(World):
         item_pool_dict = self.build_item_pool_dict()
         
         # Create items following the dictionary that was previously constructed
-        self.create_rings(item_pool_dict["Random Ring"])
-        del item_pool_dict["Random Ring"]
+        if (item_pool_dict.get("Random Ring")):
+            self.create_rings(item_pool_dict["Random Ring"])
+            del item_pool_dict["Random Ring"]
 
         for item_name, quantity in item_pool_dict.items():
             for i in range(quantity):
