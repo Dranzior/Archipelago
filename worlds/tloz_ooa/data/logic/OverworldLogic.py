@@ -85,9 +85,36 @@ def make_overworld_logic(player: int):
                 ooa_can_punch(state, player)
             ])
         ])],
+        ["veran beaten", "ganon beaten", False, lambda state: any([
+            all([
+                # casual rules
+                ooa_has_noble_sword(state, player),
+                ooa_has_seedshooter(state, player),
+                ooa_can_use_ember_seeds(state, player, False),
+                ooa_can_use_mystery_seeds(state, player)
+            ]),
+            all([
+                ooa_option_medium_logic(state, player),
+                ooa_has_sword(state, player, False),
+                any([
+                    # all seeds damage Twinrova phase 2
+                    ooa_has_seedshooter(state, player),
+                    all([
+                        ooa_option_hard_logic(state, player),
+                        ooa_can_use_seeds(state, player),
+                        # satchel can't use pegasus to damage, but all others work
+                        any([
+                            ooa_has_ember_seeds(state, player),
+                            ooa_has_mystery_seeds(state, player),
+                            ooa_has_scent_seeds(state, player),
+                            ooa_has_gale_seeds(state, player)
+                        ])
+                    ])
+                ])
+            ])
+        ])],
         # TODO : Check Essence 3, 5, 7
 
-        
         # SHORE PRESENT
         #######################################
         ["forest of time", "shore present", True,  lambda state: state.has("Ricky's Gloves", player)],
