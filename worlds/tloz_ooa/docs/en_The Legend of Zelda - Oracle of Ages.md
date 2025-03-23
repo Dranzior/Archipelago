@@ -19,6 +19,7 @@ Items belonging to other worlds use an easily recognizable Archipelago sprite, w
 
 * Cheating in an essence break the second screen of the inventory (Please don't)
 * Some key door are only locked in one side, which create situation when you enter a screen and you are softlock if don't have the key.
+* Trade items aren't displayed properly in the second screen
 
 ## Frequently Asked Questions
 
