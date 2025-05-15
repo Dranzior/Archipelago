@@ -13,7 +13,8 @@ def make_subrosia_logic(player: int):
         ["volcanoes west portal", "subrosia volcano sector", True, None],
         ["d8 entrance portal", "d8 entrance", True, None],
 
-        ["subrosia pirates sector", "western coast after ship", False, lambda state: state.has("Pirate's Bell", player)],
+        # TODO when alt starting locations are implemented, there probably needs to be a way to re-use this forced transition
+        ["pirates after bell", "western coast after ship", False, None],
 
         # Regions ###############################################################
 
@@ -55,6 +56,14 @@ def make_subrosia_logic(player: int):
                 oos_has_magnet_gloves(state, player)
             ])
         ])],
+        ["subrosia market sector", "subrosia hide and seek sector", False, lambda state: all([
+            # H&S skip : https://youtu.be/lH1yvshG3LE
+            oos_option_hell_logic(state, player),
+            oos_has_feather(state, player),
+            oos_can_use_pegasus_seeds(state, player),
+            oos_has_bombs(state, player),
+            oos_has_bracelet(state, player)
+        ])],
         ["subrosia hide and seek sector", "subrosia temple sector", True, lambda state: oos_can_jump_4_wide_liquid(state, player)],
         ["subrosia hide and seek sector", "subrosia pirates sector", True, lambda state: oos_has_feather(state, player)],
 
@@ -71,6 +80,8 @@ def make_subrosia_logic(player: int):
             state.has("Rusty Bell", player),
             oos_self_locking_item(state, player, "subrosian smithy bell", "Rusty Bell")
         ])],
+        ["subrosia temple sector", "smith secret", False, lambda state: oos_has_shield(state, player)],
+
         ["subrosia temple sector", "temple of seasons", False, None],
         ["subrosia temple sector", "tower of winter", False, lambda state: any([
             oos_has_feather(state, player),
@@ -83,6 +94,10 @@ def make_subrosia_logic(player: int):
         ["subrosia temple sector", "tower of autumn", False, lambda state: all([
             oos_has_feather(state, player),
             state.has("Bomb Flower", player)
+        ])],
+        ["subrosia temple sector", "subrosian secret", False, lambda state: all([
+            oos_can_jump_1_wide_pit(state, player, False),
+            oos_has_magic_boomerang(state, player)
         ])],
 
         ["subrosia market sector", "subrosia seaside", False, lambda state: oos_has_shovel(state, player)],
@@ -127,6 +142,13 @@ def make_subrosia_logic(player: int):
         ["subrosia east junction", "subrosia village chest", False, lambda state: any([
             oos_has_magnet_gloves(state, player),
             oos_can_jump_4_wide_pit(state, player),
+            all([
+                # early red ore : https://youtu.be/fB10dV2Gunk
+                oos_option_hell_logic(state, player),
+                oos_has_feather(state, player),
+                oos_can_use_pegasus_seeds(state, player),
+                oos_has_bombs(state, player)
+            ])
         ])],
 
         ["subrosia furnace sector", "great furnace", False, lambda state: all([
@@ -158,5 +180,6 @@ def make_subrosia_logic(player: int):
         ["subrosia market sector", "subrosia market digging spot", False, lambda state: oos_has_shovel(state, player)],
 
         ["subrosia bridge sector", "subrosia bridge digging spot", False, lambda state: oos_has_shovel(state, player)],
-    ]
 
+        ["subrosia pirates sector", "pirates after bell", False, lambda state: state.has("Pirate's Bell", player)],
+    ]

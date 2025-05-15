@@ -1,7 +1,5 @@
 from BaseClasses import ItemClassification
 
-BASE_ITEM_ID = 27022001000
-
 ITEMS_DATA = {
     #   "No Item": {
     #   'classification': ItemClassification.filler,
@@ -162,12 +160,12 @@ ITEMS_DATA = {
         'subid': 0x02
     },
     "Ore Chunks (25)": {
-        'classification': ItemClassification.progression_skip_balancing,
+        'classification': ItemClassification.filler,
         'id': 0x37,
         'subid': 0x01
     },
     "Ore Chunks (50)": {
-        'classification': ItemClassification.progression_skip_balancing,
+        'classification': ItemClassification.filler,
         'id': 0x37,
         'subid': 0x00
     },
@@ -190,7 +188,7 @@ ITEMS_DATA = {
         'id': 0x2e
     },
     "Potion": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2f
     },
 
@@ -242,47 +240,47 @@ ITEMS_DATA = {
     "Master Key (Hero's Cave)": {
         'classification': ItemClassification.progression,
         'id': 0x30,
-        'subid': 0x00
+        'subid': 0x80
     },
     "Master Key (Gnarled Root Dungeon)": {
         'classification': ItemClassification.progression,
         'id': 0x30,
-        'subid': 0x01
+        'subid': 0x81
     },
     "Master Key (Snake's Remains)": {
         'classification': ItemClassification.progression,
         'id': 0x30,
-        'subid': 0x02
+        'subid': 0x82
     },
     "Master Key (Poison Moth's Lair)": {
         'classification': ItemClassification.progression,
         'id': 0x30,
-        'subid': 0x03
+        'subid': 0x83
     },
     "Master Key (Dancing Dragon Dungeon)": {
         'classification': ItemClassification.progression,
         'id': 0x30,
-        'subid': 0x04
+        'subid': 0x84
     },
     "Master Key (Unicorn's Cave)": {
         'classification': ItemClassification.progression,
         'id': 0x30,
-        'subid': 0x05
+        'subid': 0x85
     },
     "Master Key (Ancient Ruins)": {
         'classification': ItemClassification.progression,
         'id': 0x30,
-        'subid': 0x06
+        'subid': 0x86
     },
     "Master Key (Explorer's Crypt)": {
         'classification': ItemClassification.progression,
         'id': 0x30,
-        'subid': 0x07
+        'subid': 0x87
     },
     "Master Key (Sword & Shield Dungeon)": {
         'classification': ItemClassification.progression,
         'id': 0x30,
-        'subid': 0x08
+        'subid': 0x88
     },
     "Boss Key (Gnarled Root Dungeon)": {
         'classification': ItemClassification.progression,
@@ -420,7 +418,7 @@ ITEMS_DATA = {
         'id': 0x34,
         'subid': 0x01
     },
-    
+
     #     "Maku Seed": {
     #           'classification': ItemClassification.progression,
     #         'id': 0x36
@@ -471,8 +469,8 @@ ITEMS_DATA = {
         'id': 0x3e
     },
     "Phonograph": {
-         'classification': ItemClassification.progression,
-         'id': 0x3f
+        'classification': ItemClassification.progression,
+        'id': 0x3f
     },
 
     "Gnarled Key": {
@@ -566,385 +564,385 @@ ITEMS_DATA = {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x04,
-        'ring': True
+        'ring': 'useless'
     },
     "Power Ring L-1": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x05,
-        'ring': True
+        'ring': 'good'
     },
     "Power Ring L-2": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x06,
-        'ring': True
+        'ring': 'good'
     },
     "Power Ring L-3": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x07,
-        'ring': True
+        'ring': 'good'
     },
     "Armor Ring L-1": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x08,
-        'ring': True
+        'ring': 'good'
     },
     "Armor Ring L-2": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x09,
-        'ring': True
+        'ring': 'good'
     },
     "Armor Ring L-3": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x0a,
-        'ring': True
+        'ring': 'good'
     },
     "Red Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x0b,
-        'ring': True
+        'ring': 'good'
     },
     "Blue Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x0c,
-        'ring': True
+        'ring': 'good'
     },
     "Green Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x0d,
-        'ring': True
+        'ring': 'good'
     },
     "Cursed Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x0e,
-        'ring': True
+        'ring': 'useless'
     },
     "Expert's Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x0f,
-        'ring': True
+        'ring': 'good'
     },
     "Blast Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x10,
-        'ring': True
+        'ring': 'good'
     },
     "Rang Ring L-1": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x11,
-        'ring': True
+        'ring': 'good'
     },
     "GBA Time Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x12,
-        'ring': True
+        'ring': 'useless'
     },
     "Maple's Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x13,
-        'ring': True
+        'ring': 'good'
     },
     "Steadfast Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x14,
-        'ring': True
+        'ring': 'good'
     },
     "Pegasus Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x15,
-        'ring': True
+        'ring': 'good'
     },
     "Toss Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x16,
-        'ring': True
+        'ring': 'good'
     },
     "Heart Ring L-1": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x17,
-        'ring': True
+        'ring': 'good'
     },
     "Heart Ring L-2": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x18,
-        'ring': True
+        'ring': 'good'
     },
     "Swimmer's Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x19,
-        'ring': True
+        'ring': 'good'
     },
     "Charge Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x1a,
-        'ring': True
+        'ring': 'good'
     },
     "Light Ring L-1": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x1b,
-        'ring': True
+        'ring': 'good'
     },
     "Light Ring L-2": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x1c,
-        'ring': True
+        'ring': 'good'
     },
     "Bomber's Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x1d,
-        'ring': True
+        'ring': 'good'
     },
     "Green Luck Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x1e,
-        'ring': True
+        'ring': 'good'
     },
     "Blue Luck Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x1f,
-        'ring': True
+        'ring': 'good'
     },
     "Gold Luck Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x20,
-        'ring': True
+        'ring': 'good'
     },
     "Red Luck Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x21,
-        'ring': True
+        'ring': 'good'
     },
     "Green Holy Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x22,
-        'ring': True
+        'ring': 'good'
     },
     "Blue Holy Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x23,
-        'ring': True
+        'ring': 'good'
     },
     "Red Holy Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x24,
-        'ring': True
+        'ring': 'good'
     },
     "Snowshoe Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x25,
-        'ring': True
+        'ring': 'good'
     },
     "Roc's Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x26,
-        'ring': True
+        'ring': 'good'
     },
     "Quicksand Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x27,
-        'ring': True
+        'ring': 'good'
     },
     "Red Joy Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x28,
-        'ring': True
+        'ring': 'good'
     },
     "Blue Joy Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x29,
-        'ring': True
+        'ring': 'good'
     },
     "Gold Joy Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x2a,
-        'ring': True
+        'ring': 'good'
     },
     "Green Joy Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x2b,
-        'ring': True
+        'ring': 'good'
     },
     "Discovery Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x2c,
-        'ring': True
+        'ring': 'good'
     },
     "Rang Ring L-2": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x2d,
-        'ring': True
+        'ring': 'good'
     },
     "Octo Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x2e,
-        'ring': True
+        'ring': 'useless'
     },
     "Moblin Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x2f,
-        'ring': True
+        'ring': 'useless'
     },
     "Like Like Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x30,
-        'ring': True
+        'ring': 'useless'
     },
     "Subrosian Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x31,
-        'ring': True
+        'ring': 'useless'
     },
     "First Gen Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x32,
-        'ring': True
+        'ring': 'useless'
     },
     "Spin Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x33,
-        'ring': True
+        'ring': 'good'
     },
     "Bombproof Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x34,
-        'ring': True
+        'ring': 'good'
     },
     "Energy Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x35,
-        'ring': True
+        'ring': 'good'
     },
-    "Double Edge Ring": {
-        'classification': ItemClassification.useful,
+    "Dbl. Edge Ring": {
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x36,
-        'ring': True
+        'ring': 'good'
     },
     "GBA Nature Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x37,
-        'ring': True
+        'ring': 'useless'
     },
     "Slayer's Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x38,
-        'ring': True
+        'ring': 'useless'
     },
     "Rupee Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x39,
-        'ring': True
+        'ring': 'useless'
     },
     "Victory Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x3a,
-        'ring': True
+        'ring': 'useless'
     },
     "Sign Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x3b,
-        'ring': True
+        'ring': 'useless'
     },
     "100th Ring": {
         'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x3c,
-        'ring': True
+        'ring': 'useless'
     },
     "Whisp Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x3d,
-        'ring': True
+        'ring': 'good'
     },
     "Gasha Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x3e,
-        'ring': True
+        'ring': 'good'
     },
     "Peace Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x3f,
-        'ring': True
+        'ring': 'good'
     },
     "Zora Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x40,
-        'ring': True
+        'ring': 'good'
     },
     "Fist Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x41,
-        'ring': True
+        'ring': 'good'
     },
     "Whimsical Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x42,
-        'ring': True
+        'ring': 'good'
     },
     "Protection Ring": {
-        'classification': ItemClassification.useful,
+        'classification': ItemClassification.filler,
         'id': 0x2d,
         'subid': 0x43,
-        'ring': True
+        'ring': 'good'
     },
 
     "Bomb Flower": {
@@ -990,5 +988,9 @@ ITEMS_DATA = {
         'classification': ItemClassification.progression,
         'id': 0x40,
         'subid': 0x07
+    },
+    "Maku Seed": {  # Mostly for debug
+        'classification': ItemClassification.progression_skip_balancing,
+        'id': 0x36
     },
 }

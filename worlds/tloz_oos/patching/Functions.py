@@ -25,8 +25,12 @@ def get_asm_files(patch_data):
         asm_files.append("asm/conditional/remove_d2_alt_entrance.yaml")
     if patch_data["options"]["goal"] == OracleOfSeasonsGoal.option_beat_ganon:
         asm_files.append("asm/conditional/ganon_goal.yaml")
+    if patch_data["options"]["rosa_quick_unlock"]:
+        asm_files.append("asm/conditional/instant_rosa.yaml")
     if get_settings()["tloz_oos_options"]["remove_music"]:
         asm_files.append("asm/conditional/mute_music.yaml")
+    if patch_data["options"]["secret_locations"]:
+        asm_files.append("asm/conditional/secret_locations.yaml")
     return asm_files
 
 
@@ -246,7 +250,6 @@ def define_option_constants(assembler: Z80Assembler, patch_data):
     assembler.define_byte("option.defaultSeedType", 0x20 + patch_data["options"]["default_seed"])
     assembler.define_byte("option.receivedDamageModifier", options["combat_difficulty"])
     assembler.define_byte("option.openAdvanceShop", options["advance_shop"])
-    assembler.define_byte("option.warpToStart", options["warp_to_start"])
 
     assembler.define_byte("option.requiredEssences", options["required_essences"])
     assembler.define_byte("option.goldenBeastsRequirement", options["golden_beasts_requirement"])
@@ -309,6 +312,37 @@ def process_lost_woods_sequence(sequence):
             text_bytes.extend([0x05, 0x56])  # wait for input + newline
     text_bytes.append(0x00)
     return sequence_bytes, text_bytes
+
+
+def define_tree_sprites(assembler: Z80Assembler, patch_data):
+    tree_data = {  # Name: (map, position)
+        "Horon Village: Seed Tree": (0xf8, 0x48),
+        "Woods of Winter: Seed Tree": (0x9e, 0x88),
+        "Holodrum Plain: Seed Tree": (0x67, 0x88),
+        "Spool Swamp: Seed Tree": (0x72, 0x88),
+        "Sunken City: Seed Tree": (0x5f, 0x86),
+        "Tarm Ruins: Seed Tree": (0x10, 0x48),
+    }
+    i = 1
+    for tree_name in tree_data:
+        seed = patch_data["locations"][tree_name]
+        if seed["item"] == "Ember Seeds":
+            continue
+        seed_id, _ = get_item_id_and_subid(seed)
+        assembler.define_byte(f"seedTree{i}.map", tree_data[tree_name][0])
+        assembler.define_byte(f"seedTree{i}.position", tree_data[tree_name][1])
+        assembler.define_byte(f"seedTree{i}.gfx", seed_id - 26)
+        assembler.define(f"seedTree{i}.rectangle", f"treeRect{seed_id}")
+        i += 1
+    if i == 5:
+        # Duplicate ember, we have to blank some data
+        assembler.define_byte("seedTree5.enabled", 0x0e)
+        assembler.define_byte("seedTree5.map", 0xff)
+        assembler.define_byte("seedTree5.position", 0)
+        assembler.define_byte("seedTree5.gfx", 0)
+        assembler.define_word("seedTree5.rectangle", 0)
+    else:
+        assembler.define_byte("seedTree5.enabled", 0x0d)
 
 
 def get_treasure_addr(rom: RomData, item_name: str):
@@ -418,7 +452,7 @@ def set_file_select_text(assembler: Z80Assembler, slot_name: str):
         else:
             return 0xfc  # All other chars are blank spaces
 
-    row_1 = [char_to_tile(c) for c in f"ARCHIPELAGO {VERSION}".ljust(16, " ")]
+    row_1 = [char_to_tile(c) for c in f"ARCHIPELAGO {VERSION[0]}.{VERSION[1]}".ljust(16, " ")]
     row_2 = [char_to_tile(c) for c in slot_name.replace("-", " ").upper()]
     row_2_left_padding = int((16 - len(row_2)) / 2)
     row_2_right_padding = int(16 - row_2_left_padding - len(row_2))
@@ -557,9 +591,46 @@ def set_character_sprite_from_settings(rom: RomData):
     sprite = get_settings()["tloz_oos_options"]["character_sprite"]
     sprite_dir = Path(Utils.local_path(os.path.join('data', 'sprites', 'oos_ooa')))
     if sprite == "random":
-        sprite_filenames = [f for f in os.listdir(sprite_dir) if sprite_dir.joinpath(f).is_file() and f.endswith(".bin")]
-        sprite = sprite_filenames[random.randint(0, len(sprite_filenames) - 1)]
-    elif not sprite.endswith(".bin"):
+        sprite_weights = {f: 1 for f in os.listdir(sprite_dir) if sprite_dir.joinpath(f).is_file() and f.endswith(".bin")}
+    elif isinstance(sprite, str):
+        sprite_weights = {sprite: 1}
+    else:
+        sprite_weights = sprite
+
+    weights = random.randrange(sum(sprite_weights.values()))
+    for sprite, weight in sprite_weights.items():
+        weights -= weight
+        if weights < 0:
+            break
+
+    palette_option = get_settings()["tloz_oos_options"]["character_palette"]
+    if palette_option == "random":
+        palette_weights = {palette: 1 for palette in get_available_random_colors_from_sprite_name(sprite)}
+    elif isinstance(palette_option, str):
+        palette_weights = {palette_option: 1}
+    else:
+        valid_palettes = get_available_random_colors_from_sprite_name(sprite)
+        palette_weights = {}
+        for palette, weight in palette_option.items():
+            splitted_palette = palette.split("|")
+            if len(splitted_palette) == 2 and splitted_palette[1] != sprite:
+                continue
+            palette_name = splitted_palette[0]
+            if palette_name == "random":
+                for valid_palette in valid_palettes:
+                    palette_weights[valid_palette] = weight
+            elif palette_name in valid_palettes:
+                palette_weights[palette_name] = weight
+        if len(palette_weights) == 0:
+            palette_weights["green"] = 1
+
+    weights = random.randrange(sum(palette_weights.values()))
+    for palette, weight in palette_weights.items():
+        weights -= weight
+        if weights < 0:
+            break
+
+    if not sprite.endswith(".bin"):
         sprite += ".bin"
     if sprite != "link.bin":
         sprite_path = sprite_dir.joinpath(sprite)
@@ -567,10 +638,6 @@ def set_character_sprite_from_settings(rom: RomData):
             raise ValueError(f"Path '{sprite_path}' doesn't exist")
         sprite_bytes = list(Path(sprite_path).read_bytes())
         rom.write_bytes(0x68000, sprite_bytes)
-
-    palette = get_settings()["tloz_oos_options"]["character_palette"]
-    if palette == "random":
-        palette = random.choice(get_available_random_colors_from_sprite_name(sprite))
 
     if palette == "green":
         return  # Nothing to change
@@ -739,6 +806,7 @@ def define_essence_sparkle_constants(assembler: Z80Assembler, patch_data):
     if show_dungeons_with_essence and not patch_data["options"]["shuffle_essences"]:
         for i, pedestal in enumerate(essence_pedestals):
             if patch_data["locations"][pedestal]["item"] not in ESSENCES:
+                byte_array.extend([0xF0, 0x00])  # Nonexistent room, for padding
                 continue
 
             # Find where dungeon entrance is located, and place the sparkle hint there
@@ -750,3 +818,275 @@ def define_essence_sparkle_constants(assembler: Z80Assembler, patch_data):
 
     require_compass = show_dungeons_with_essence == OracleOfSeasonsShowDungeonsWithEssence.option_with_compass
     assembler.define_byte("option.essenceSparklesRequireCompass", 1 if require_compass else 0)
+
+
+def randomize_ai_for_april_fools(rom: RomData, seed: int):
+    code_table = 0x2f16
+    # TODO : properly implement that ?
+    enemy_table = [
+        # enemy id in (08, 2f), specially for the blade traps since they can't take the beamos AI, or they'd block d6
+        {
+            0: [
+                0x08,  # river zora
+                0x09,  # octorok
+                0x0c,  # arrow moblin
+                0x0d,  # lynel
+                0x0f,
+                0x11,  # Pokey is too unreliable and laggy
+                0x12,  # gibdo
+                0x13,  # spark
+                0x14,  # spiked beetle
+                0x15,  # bubble
+                0x18,  # buzzblob
+                0x19,  # whisp
+                0x1a,  # crab
+                0x20,  # masked moblin
+                0x22,
+                0x23,  # pol's voice
+                0x25,  # goponga flower
+                0x29,
+                0x2d,
+                0x2e,
+                0x2f
+            ],
+            1: [
+                0x0a,  # boomerang moblin
+                0x1c,  # iron mask
+                0x1e,  # piranha
+                0x25,
+                0x2c,  # cheep cheep, will probably break
+            ],
+            2: [
+                0x0b,  # leever
+                0x17,  # ghini
+                0x21,  # arrow darknut
+            ],
+            3: [
+                0x1b,  # spiny beetle
+                0x24,  # like like, flagged as unkillable as the spawner, and is logically not required
+                0x2a,
+            ],
+            4: [
+                0x10,  # rope
+            ],
+            5: [
+                0x0e,  # blade trap
+                0x2b,
+            ],
+        },
+        # enemy id in (08, 2f)
+        {
+            0: [
+                0x08,  # river zora
+                0x09,  # octorok
+                0x0c,  # arrow moblin
+                0x0d,  # lynel
+                0x0f,
+                0x11,  # Pokey is too unreliable and laggy
+                0x12,  # gibdo
+                0x13,  # spark
+                0x14,  # spiked beetle
+                0x15,  # bubble
+                0x16,  # beamos
+                0x18,  # buzzblob
+                0x19,  # whisp
+                0x1a,  # crab
+                0x20,  # masked moblin
+                0x22,
+                0x23,  # pol's voice
+                0x25,  # goponga flower
+                0x29,
+                0x2d,
+                0x2e,
+                0x2f
+            ],
+            1: [
+                0x0a,  # boomerang moblin
+                0x1c,  # iron mask
+                0x1e,  # piranha
+                0x25,
+                0x2c,  # cheep cheep, will probably break
+            ],
+            2: [
+                0x0b,  # leever
+                0x17,  # ghini
+                0x21,  # arrow darknut
+            ],
+            3: [
+                0x1b,  # spiny beetle
+                0x24,  # like like, flagged as unkillable as the spawner, and is logically not required
+                0x2a,
+            ],
+            4: [
+                0x10,  # rope
+            ],
+            5: [
+                0x2b,
+            ],
+        },
+        # enemy id in (08, 2f), killable
+        {
+            0: [
+                0x09,  # octorok
+                0x12,  # gibdo
+                0x14,  # spiked beetle
+                0x18,  # buzzblob
+                0x1a,  # crab
+                0x22,
+                0x23,  # pol's voice
+                0x0d,  # lynel
+                0x0c,  # arrow moblin
+                0x20,  # masked moblin
+            ],
+            1: [
+                0x0a,  # boomerang moblin
+                0x1c,  # iron mask
+                0x1e,  # piranha
+                0x25,
+            ],
+            2: [
+                0x0b,  # leever
+                0x17,  # ghini
+                0x21,  # arrow darknut
+            ],
+            4: [
+                0x10,  # rope
+            ],
+        },
+
+        # enemy id in (30, 60)
+        {
+            0: [
+                0x30,
+                0x31,
+                0x33,
+                0x36,
+                0x37,
+                0x38,
+                0x3b,
+                0x3c,
+                0x3d,
+                0x3e,
+                0x43,
+                0x46,
+                0x48,
+                0x49,
+                0x4a,
+                0x4b,
+                0x4d,
+                0x4e,
+                0x5e,
+            ],
+            1: [
+                0x32,
+                0x34,
+                0x39,
+                0x41,
+                0x4c,
+                0x4f,
+            ],
+            2: [
+                # 0x40,
+                0x52,
+            ],
+            3: [
+                0x51,
+                0x58,
+            ],
+            4: [
+                0x45,  # pincer
+            ]
+        },
+
+        # enemy id in (30, 60), killable
+        {
+            0: [
+                0x30,
+                0x31,
+                0x3c,
+                0x3d,
+                0x3e,
+                0x43,
+                0x48,
+                0x49,
+                0x4a,
+                0x4b,
+                0x4d,
+                0x4e,
+            ],
+            1: [
+                0x32,
+                0x34,
+                0x39,
+                0x4c,
+                0x4f,
+            ],
+            2: [
+                # 0x40
+            ],
+        }
+    ]
+    r = random.Random(seed)
+    ai_table = {}
+
+    for bank in enemy_table:
+        for cat in bank:
+            enemies = bank[cat]
+            if isinstance(cat, int) and cat != 0:
+                ais = list(bank[cat])
+                for cat2 in bank:
+                    if isinstance(cat2, int):
+                        if cat2 == 0:
+                            ais.extend(bank[cat2])
+                        elif cat2 >= cat:
+                            ais.extend(bank[cat2])
+                            ais.extend(bank[cat2])
+            else:
+                ais = list(bank[cat])
+            r.shuffle(ais)
+            for i in range(len(enemies)):
+                enemy = enemies[i]
+                ai = ais.pop()
+                ai_table[enemy] = ai
+
+    ai_table[0x2f] = 0x2f # Thwomps have to stay vanilla for platforming
+    for enemy in ai_table:
+        ai = ai_table[enemy]
+        rom.write_word(code_table + enemy * 2, rom.read_word(code_table + ai * 2))
+
+    blinkers = {
+        0x08,
+        0x0b,
+        0x10,
+        0x24,
+        0x34,
+        0x40,
+        0x41
+    }
+
+    # Make some enemies hittable without having access to their AI
+    if ai_table[0x08] not in blinkers:
+        rom.write_byte(0xFDD92, 0x8F)  # river zora
+    if ai_table[0x0b] not in blinkers:
+        rom.write_byte(0xFDD9E, 0x90)  # leever
+    if ai_table[0x10] not in blinkers:
+        rom.write_byte(0xFDDB2, 0x90)  # rope
+    if ai_table[0x24] not in blinkers:
+        rom.write_byte(0xFDE02, 0xA2)  # like-like
+    if ai_table[0x34] not in blinkers:
+        rom.write_byte(0xFDE42, 0xAA)  # zol
+    # if ai_table[0x40] not in blinkers:
+    #     rom.write_byte(0xFDE72, 0xAF)  # wizzrobes
+    if ai_table[0x41] not in blinkers:
+        rom.write_byte(0xFDE76, 0xB0)  # crow
+
+    if ai_table[0x14] != 0x14:
+        rom.write_byte(0xFDDC2, 0xCE)  # Make spiked beetles have the flipped collisions
+    if ai_table[0x1C] != 0x1C:
+        rom.write_byte(0xFDDE2, 0xD0)  # Make iron mask have the unmasked collisions
+    if ai_table[0x3e] != 0x3e:
+        rom.write_byte(0xFDE6A, 0xAE)  # Make peahats have vulnerable collisions
+
+    if ai_table[0x24] != 0x24:
+        # make like like deal low knockback instead of softlocking by grabbing him then never releasing him due to the lack of AI
+        rom.write_byte(0x1EED0, 0x01)
